@@ -30,7 +30,7 @@ ALL_TARGETS += allegro allegro-examples allegro-headers
 PREFIX := /usr
 EOF
 
-%{__make} all CC="%{__cc}" OFLAGS="%{optflags}"
+%{__make} all CC="%{__cc}" OFLAGS="%{rpmcflags}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
