@@ -11,7 +11,7 @@ URL:		http://dumb.sourceforge.net/
 BuildRequires:	allegro-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		specflags_ia32	"-fomit-frame-pointer"
+%define		specflags_ia32	 -fomit-frame-pointer 
 
 %description
 DUMB - Dedicated Universal Music Bastardisation library.
