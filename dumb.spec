@@ -6,6 +6,7 @@ Release:	1
 License:	GPL-like
 Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/dumb/%{name}-%{version}.tar.gz
+# Source0-md5:	bf8a8cc3af4c5f6700b812b69a7cbb35
 URL:		http://dumb.sourceforge.net/
 BuildRequires:	allegro-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
