@@ -1,12 +1,12 @@
 Summary:	DUMB - Dedicated Universal Music Bastardisation
 Summary(pl):	DUMB - Dedicated Universal Music Bastardisation
 Name:		dumb
-Version:	0.9.1
+Version:	0.9.2
 Release:	1
 License:	GPL-like
 Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/dumb/%{name}-%{version}.tar.gz
-# Source0-md5:	bf8a8cc3af4c5f6700b812b69a7cbb35
+# Source0-md5:	0ce45f64934e6d5d7b82a55108596680
 URL:		http://dumb.sourceforge.net/
 BuildRequires:	allegro-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -21,7 +21,13 @@ Biblioteka DUMB - Dedicated Universal Music Bastardisation.
 %setup -q -n %{name}
 
 %build
-./fix.sh unix
+cat <<EOF > make/config.txt
+include make/unix.inc
+ALL_TARGETS := core core-examples core-headers
+ALL_TARGETS += allegro allegro-examples allegro-headers
+PREFIX := /usr
+EOF
+
 %{__make} all CC="%{__cc}" OFLAGS="%{optflags}"
 
 %install
