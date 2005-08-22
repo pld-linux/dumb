@@ -1,12 +1,12 @@
 Summary:	DUMB - Dedicated Universal Music Bastardisation
 Summary(pl):	DUMB - Dedicated Universal Music Bastardisation
 Name:		dumb
-Version:	0.9.2
-Release:	1
+Version:	0.9.3
+Release:	0.1
 License:	GPL-like
 Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/dumb/%{name}-%{version}.tar.gz
-# Source0-md5:	0ce45f64934e6d5d7b82a55108596680
+# Source0-md5:	f48da5b990aa8aa822d3b6a951baf5c2
 URL:		http://dumb.sourceforge.net/
 BuildRequires:	allegro-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -19,8 +19,32 @@ DUMB - Dedicated Universal Music Bastardisation library.
 %description -l pl
 Biblioteka DUMB - Dedicated Universal Music Bastardisation.
 
+%package devel
+Summary:	Header files for dumb
+Summary(pl):	Pliki nag³ówkowe dla dumb
+Group:		Development/Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description devel
+dumb header files.
+
+%description devel -l pl
+Pliki nag³ówkowe dla dumb.
+
+%package static
+Summary:	Static libraries for dumb
+Summary(pl):	Statyczne biblioteki dla dumb
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
+
+%description static
+dumb static libraries.
+
+%description static -l pl
+Biblioteki statyczne dla dumb.
+
 %prep
-%setup -q -n %{name}
+%setup -q
 
 %build
 cat <<EOF > make/config.txt
@@ -30,14 +54,18 @@ ALL_TARGETS += allegro allegro-examples allegro-headers
 PREFIX := /usr
 EOF
 
-%{__make} all CC="%{__cc}" OFLAGS="%{rpmcflags}"
+%{__make} all \
+	CC="%{__cc}" \
+	OFLAGS="%{rpmcflags}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_includedir},%{_libdir}}
+install -d $RPM_BUILD_ROOT{%{_includedir},%{_libdir},%{_bindir}}
 
-%{__make} install PREFIX=$RPM_BUILD_ROOT%{_prefix}
-%{__make} install PREFIX=$RPM_BUILD_ROOT%{_prefix} DEBUGMODE=1
+%{__make} install \
+	PREFIX=$RPM_BUILD_ROOT%{_prefix}
+%{__make} install \
+	PREFIX=$RPM_BUILD_ROOT%{_prefix} DEBUGMODE=1
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -45,5 +73,12 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc *.txt docs/*
+%attr(755,root,root) %{_bindir}/dumb*
+
+%files devel
+%defattr(644,root,root,755)
 %{_includedir}/*
-%{_libdir}/*
+
+%files static
+%defattr(644,root,root,755)
+%{_libdir}/lib*.a
