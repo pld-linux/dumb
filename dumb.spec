@@ -2,7 +2,7 @@ Summary:	DUMB - Dedicated Universal Music Bastardisation
 Summary(pl):	DUMB - Dedicated Universal Music Bastardisation
 Name:		dumb
 Version:	0.9.3
-Release:	0.1
+Release:	1
 License:	GPL-like
 Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/dumb/%{name}-%{version}.tar.gz
@@ -23,7 +23,7 @@ Biblioteka DUMB - Dedicated Universal Music Bastardisation.
 Summary:	Header files for dumb
 Summary(pl):	Pliki nag³ówkowe dla dumb
 Group:		Development/Libraries
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}-static = %{version}-%{release}
 
 %description devel
 dumb header files.
