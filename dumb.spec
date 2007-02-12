@@ -1,5 +1,5 @@
 Summary:	DUMB - Dedicated Universal Music Bastardisation
-Summary(pl):	DUMB - Dedicated Universal Music Bastardisation
+Summary(pl.UTF-8):   DUMB - Dedicated Universal Music Bastardisation
 Name:		dumb
 Version:	0.9.3
 Release:	1
@@ -16,31 +16,31 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 DUMB - Dedicated Universal Music Bastardisation library.
 
-%description -l pl
+%description -l pl.UTF-8
 Biblioteka DUMB - Dedicated Universal Music Bastardisation.
 
 %package devel
 Summary:	Header files for dumb
-Summary(pl):	Pliki nag≥Ûwkowe dla dumb
+Summary(pl.UTF-8):   Pliki nag≈Ç√≥wkowe dla dumb
 Group:		Development/Libraries
 Requires:	%{name}-static = %{version}-%{release}
 
 %description devel
 dumb header files.
 
-%description devel -l pl
-Pliki nag≥Ûwkowe dla dumb.
+%description devel -l pl.UTF-8
+Pliki nag≈Ç√≥wkowe dla dumb.
 
 %package static
 Summary:	Static libraries for dumb
-Summary(pl):	Statyczne biblioteki dla dumb
+Summary(pl.UTF-8):   Statyczne biblioteki dla dumb
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 dumb static libraries.
 
-%description static -l pl
+%description static -l pl.UTF-8
 Biblioteki statyczne dla dumb.
 
 %prep
