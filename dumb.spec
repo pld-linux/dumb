@@ -2,7 +2,7 @@ Summary:	DUMB - Dedicated Universal Music Bastardisation
 Summary(pl.UTF-8):	DUMB - Dedicated Universal Music Bastardisation
 Name:		dumb
 Version:	0.9.3
-Release:	1
+Release:	2
 License:	GPL-like
 Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/dumb/%{name}-%{version}.tar.gz
@@ -24,6 +24,8 @@ Summary:	Header files for dumb
 Summary(pl.UTF-8):	Pliki nagłówkowe dla dumb
 Group:		Development/Libraries
 Requires:	%{name}-static = %{version}-%{release}
+# for libaldmb
+#Requires:	allegro-devel
 
 %description devel
 dumb header files.
@@ -63,9 +65,12 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_includedir},%{_libdir},%{_bindir}}
 
 %{__make} install \
-	PREFIX=$RPM_BUILD_ROOT%{_prefix}
+	PREFIX=$RPM_BUILD_ROOT%{_prefix} \
+	LIB_INSTALL_PATH=$RPM_BUILD_ROOT%{_libdir}
 %{__make} install \
-	PREFIX=$RPM_BUILD_ROOT%{_prefix} DEBUGMODE=1
+	DEBUGMODE=1 \
+	PREFIX=$RPM_BUILD_ROOT%{_prefix} \
+	LIB_INSTALL_PATH=$RPM_BUILD_ROOT%{_libdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -77,8 +82,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(644,root,root,755)
-%{_includedir}/*
+%{_includedir}/dumb.h
+%{_includedir}/aldumb.h
 
 %files static
 %defattr(644,root,root,755)
-%{_libdir}/lib*.a
+%{_libdir}/libdumb.a
+%{_libdir}/libdumbd.a
+%{_libdir}/libaldmb.a
+%{_libdir}/libaldmd.a
