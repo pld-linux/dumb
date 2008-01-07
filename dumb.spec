@@ -1,3 +1,5 @@
+# TODO
+# - build shared lib
 Summary:	DUMB - Dedicated Universal Music Bastardisation
 Summary(pl.UTF-8):	DUMB - Dedicated Universal Music Bastardisation
 Name:		dumb
