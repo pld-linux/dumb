@@ -1,10 +1,11 @@
 # TODO
 # - build shared lib
+# - do we need debug version of libraires/headers?
 Summary:	DUMB - Dedicated Universal Music Bastardisation
 Summary(pl.UTF-8):	DUMB - Dedicated Universal Music Bastardisation
 Name:		dumb
 Version:	0.9.3
-Release:	2
+Release:	3
 License:	GPL-like
 Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/dumb/%{name}-%{version}.tar.gz
@@ -13,7 +14,8 @@ URL:		http://dumb.sourceforge.net/
 BuildRequires:	allegro-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		specflags_ia32	 -fomit-frame-pointer 
+%define		specflags_ia32		-fomit-frame-pointer
+%define		specflags_x86_64	-fPIC
 
 %description
 DUMB - Dedicated Universal Music Bastardisation library.
@@ -60,7 +62,9 @@ EOF
 
 %{__make} all \
 	CC="%{__cc}" \
-	OFLAGS="%{rpmcflags}"
+	LDFLAGS="%{rpmldflags}" \
+	OFLAGS="%{rpmcflags}" \
+	DBGFLAGS="-DDEBUGMODE=1 %{rpmcflags}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -69,6 +73,7 @@ install -d $RPM_BUILD_ROOT{%{_includedir},%{_libdir},%{_bindir}}
 %{__make} install \
 	PREFIX=$RPM_BUILD_ROOT%{_prefix} \
 	LIB_INSTALL_PATH=$RPM_BUILD_ROOT%{_libdir}
+
 %{__make} install \
 	DEBUGMODE=1 \
 	PREFIX=$RPM_BUILD_ROOT%{_prefix} \
