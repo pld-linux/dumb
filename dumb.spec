@@ -5,7 +5,7 @@ Summary:	DUMB - Dedicated Universal Music Bastardisation
 Summary(pl.UTF-8):	DUMB - Dedicated Universal Music Bastardisation
 Name:		dumb
 Version:	0.9.3
-Release:	3
+Release:	4
 License:	GPL-like
 Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/dumb/%{name}-%{version}.tar.gz
