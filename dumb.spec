@@ -106,7 +106,7 @@ ALL_TARGETS += allegro allegro-examples allegro-headers
 PREFIX := /usr
 EOF
 
-%{__make} all \
+%{__make} -j1 all \
 	CC="%{__cc}" \
 	LDFLAGS="%{rpmldflags}" \
 	OFLAGS="%{rpmcflags}" \
