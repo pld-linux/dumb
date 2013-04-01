@@ -1,0 +1,148 @@
+--- dumb-0.9.3/make/unix.inc.orig	2005-08-08 02:18:40.000000000 +0200
++++ dumb-0.9.3/make/unix.inc	2013-03-31 22:26:03.606001233 +0200
+@@ -11,6 +11,10 @@ FIX = $(1)
+ ECHO = @echo $(1)
+ DELETE = rm -f $(1)
+ COPY = cp $(1) $(2)
++LIBTOOL = libtool
++COPY_BIN = $(LIBTOOL) --mode=install install $(1) $(2)
++LIBTOOL_LINK = $(LIBTOOL) --mode=link --tag=CC
++LIBTOOL_COMPILE = $(LIBTOOL) --mode=compile --tag=CC
+ MKDIR = mkdir $(1)
+ 
+ EXE_SUFFIX :=
+--- dumb-0.9.3/make/Makefile.inc.orig	2005-08-08 02:18:40.000000000 +0200
++++ dumb-0.9.3/make/Makefile.inc	2013-03-31 22:31:29.732661102 +0200
+@@ -2,8 +2,8 @@
+ # twice with different values for CFLAGS and OBJDIR, so the optimised and
+ # debugging libraries are both built.
+ 
+-CORE_OBJECTS := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.c, %.o, $(CORE_MODULES))))
+-ALLEGRO_OBJECTS := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.c, %.o, $(ALLEGRO_MODULES))))
++CORE_OBJECTS := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.c, %.lo, $(CORE_MODULES))))
++ALLEGRO_OBJECTS := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.c, %.lo, $(ALLEGRO_MODULES))))
+ 
+ 
+ # Pass the current value of CFLAGS through to the commands. Or, more
+@@ -14,26 +14,26 @@ $(CORE_LIB_FILE): CFLAGS := $(CFLAGS)
+ $(ALLEGRO_LIB_FILE): CFLAGS := $(CFLAGS)
+ 
+ 
+-$(OBJDIR)/%.o: src/core/%.c include/dumb.h include/internal/dumb.h
+-	$(CC) $(CFLAGS) -c -o $@ $<
++$(OBJDIR)/%.lo: src/core/%.c include/dumb.h include/internal/dumb.h
++	$(LIBTOOL_COMPILE) $(CC) $(CFLAGS) -c -o $@ $<
+ 
+-$(OBJDIR)/%.o: src/helpers/%.c include/dumb.h
+-	$(CC) $(CFLAGS) -c -o $@ $<
++$(OBJDIR)/%.lo: src/helpers/%.c include/dumb.h
++	$(LIBTOOL_COMPILE) $(CC) $(CFLAGS) -c -o $@ $<
+ 
+-$(OBJDIR)/resample.o: src/helpers/resample.inc src/helpers/resamp2.inc src/helpers/resamp3.inc
++$(OBJDIR)/resample.lo: src/helpers/resample.inc src/helpers/resamp2.inc src/helpers/resamp3.inc
+ 
+-$(OBJDIR)/%.o: src/it/%.c include/dumb.h include/internal/it.h
+-	$(CC) $(CFLAGS) -c -o $@ $<
++$(OBJDIR)/%.lo: src/it/%.c include/dumb.h include/internal/it.h
++	$(LIBTOOL_COMPILE) $(CC) $(CFLAGS) -c -o $@ $<
+ 
+-$(OBJDIR)/%.o: src/sigtypes/%.c include/dumb.h
+-	$(CC) $(CFLAGS) -c -o $@ $<
++$(OBJDIR)/%.lo: src/sigtypes/%.c include/dumb.h
++	$(LIBTOOL_COMPILE) $(CC) $(CFLAGS) -c -o $@ $<
+ 
+-$(OBJDIR)/%.o: src/allegro/%.c include/aldumb.h include/dumb.h \
++$(OBJDIR)/%.lo: src/allegro/%.c include/aldumb.h include/dumb.h \
+                       include/internal/aldumb.h include/internal/dumb.h
+-	$(CC) $(CFLAGS) $(WFLAGS_ALLEGRO) -c -o $@ $<
++	$(LIBTOOL_COMPILE) $(CC) $(CFLAGS) $(WFLAGS_ALLEGRO) -c -o $@ $<
+ 
+ $(CORE_LIB_FILE): $(CORE_OBJECTS)
+-	$(AR) rs $@ $^
++	$(LIBTOOL_LINK) $(CC) $(LDFLAGS) $(CFLAGS) -o $@ $^ $(LINK_MATH) -rpath $(LIB_INSTALL_PATH)
+ 
+ $(ALLEGRO_LIB_FILE): $(ALLEGRO_OBJECTS)
+-	$(AR) rs $@ $^
++	$(LIBTOOL_LINK) $(CC) $(LDFLAGS) $(CFLAGS) -o $@ $^ $(CORE_LIB_FILE) $(LINK_ALLEGRO) -rpath $(LIB_INSTALL_PATH)
+--- dumb-0.9.3/Makefile.orig	2005-08-08 02:18:41.000000000 +0200
++++ dumb-0.9.3/Makefile	2013-03-31 22:26:27.906000727 +0200
+@@ -22,7 +22,7 @@
+ #                    (Note that this is unable to delete the dumbask
+ #                    executable if the configuration is absent.)
+ 
+-MAKEFILE = Makefile.rdy
++MAKEFILE = Makefile
+ 
+ .PHONY: all install uninstall clean veryclean distclean config config-if-necessary make-outdirs
+ 
+@@ -244,11 +244,11 @@ CORE_EXAMPLES_EXE := $(addprefix example
+ ALLEGRO_EXAMPLES_EXE := $(addprefix examples/, $(notdir $(patsubst %.c, %$(EXE_SUFFIX), $(ALLEGRO_EXAMPLES))))
+ 
+ 
+-CORE_LIB_FILE_RELEASE := $(LIBDIR)/libdumb.a
+-ALLEGRO_LIB_FILE_RELEASE := $(LIBDIR)/libaldmb.a
++CORE_LIB_FILE_RELEASE := $(LIBDIR)/libdumb.la
++ALLEGRO_LIB_FILE_RELEASE := $(LIBDIR)/libaldmb.la
+ 
+-CORE_LIB_FILE_DEBUG := $(LIBDIR)/libdumbd.a
+-ALLEGRO_LIB_FILE_DEBUG := $(LIBDIR)/libaldmd.a
++CORE_LIB_FILE_DEBUG := $(LIBDIR)/libdumbd.la
++ALLEGRO_LIB_FILE_DEBUG := $(LIBDIR)/libaldmd.la
+ 
+ 
+ core: $(CORE_LIB_FILE_RELEASE) $(CORE_LIB_FILE_DEBUG)
+@@ -262,19 +262,19 @@ core-headers:
+ allegro-headers:
+ 
+ install-core: core
+-	$(call COPY,$(CORE_LIB_FILE_RELEASE),$(LIB_INSTALL_PATH))
+-	$(call COPY,$(CORE_LIB_FILE_DEBUG),$(LIB_INSTALL_PATH))
++	$(call COPY_BIN,$(CORE_LIB_FILE_RELEASE),$(LIB_INSTALL_PATH))
++	$(call COPY_BIN,$(CORE_LIB_FILE_DEBUG),$(LIB_INSTALL_PATH))
+ 
+ install-allegro: allegro
+-	$(call COPY,$(ALLEGRO_LIB_FILE_RELEASE),$(LIB_INSTALL_PATH))
+-	$(call COPY,$(ALLEGRO_LIB_FILE_DEBUG),$(LIB_INSTALL_PATH))
++	$(call COPY_BIN,$(ALLEGRO_LIB_FILE_RELEASE),$(LIB_INSTALL_PATH))
++	$(call COPY_BIN,$(ALLEGRO_LIB_FILE_DEBUG),$(LIB_INSTALL_PATH))
+ 
+ ifeq "$(COMSPEC)" ""
+ install-core-examples: core-examples
+-	$(call COPY,$(CORE_EXAMPLES_EXE),$(BIN_INSTALL_PATH))
++	$(call COPY_BIN,$(CORE_EXAMPLES_EXE),$(BIN_INSTALL_PATH))
+ 
+ install-allegro-examples: allegro-examples
+-	$(call COPY,$(ALLEGRO_EXAMPLES_EXE),$(BIN_INSTALL_PATH))
++	$(call COPY_BIN,$(ALLEGRO_EXAMPLES_EXE),$(BIN_INSTALL_PATH))
+ else
+ # Don't install the examples on a Windows system.
+ install-core-examples:
+@@ -317,22 +317,22 @@
+ 
+ OBJDIR := $(OBJDIR_BASE)/release
+ CFLAGS := $(CFLAGS_RELEASE)
+-CORE_LIB_FILE := $(LIBDIR)/libdumb.a
+-ALLEGRO_LIB_FILE := $(LIBDIR)/libaldmb.a
++CORE_LIB_FILE := $(LIBDIR)/libdumb.la
++ALLEGRO_LIB_FILE := $(LIBDIR)/libaldmb.la
+ include make/Makefile.inc
+ 
+ OBJDIR := $(OBJDIR_BASE)/debug
+ CFLAGS := $(CFLAGS_DEBUG)
+-CORE_LIB_FILE := $(LIBDIR)/libdumbd.a
+-ALLEGRO_LIB_FILE := $(LIBDIR)/libaldmd.a
++CORE_LIB_FILE := $(LIBDIR)/libdumbd.la
++ALLEGRO_LIB_FILE := $(LIBDIR)/libaldmd.la
+ include make/Makefile.inc
+ 
+ 
+ $(CORE_EXAMPLES_EXE): examples/%$(EXE_SUFFIX): examples/%.o $(CORE_LIB_FILE_RELEASE)
+-	$(CC) $^ -o $@ $(LDFLAGS) $(LINK_MATH)
++	$(LIBTOOL_LINK) $(CC) $^ -o $@ $(LDFLAGS) $(LINK_MATH)
+ 
+ $(ALLEGRO_EXAMPLES_EXE): examples/%$(EXE_SUFFIX): examples/%.o $(ALLEGRO_LIB_FILE_RELEASE) $(CORE_LIB_FILE_RELEASE)
+-	$(CC) $^ -o $@ $(LDFLAGS) $(LINK_ALLEGRO)
++	$(LIBTOOL_LINK) $(CC) $^ -o $@ $(LDFLAGS) $(LINK_ALLEGRO) $(LINK_MATH)
+ 
+ $(CORE_EXAMPLES_OBJ): examples/%.o: examples/%.c include/dumb.h
+ 	$(CC) $(CFLAGS_RELEASE) -c $< -o $@
