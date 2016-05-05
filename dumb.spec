@@ -8,7 +8,7 @@ Summary:	DUMB - Dynamic Universal Music Bibliotheque
 Summary(pl.UTF-8):	DUMB - uniwersalna biblioteka do odtwarzania muzyki
 Name:		dumb
 Version:	0.9.3
-Release:	5
+Release:	6
 License:	GPL-like
 Group:		Development/Libraries
 Source0:	http://downloads.sourceforge.net/dumb/%{name}-%{version}.tar.gz
