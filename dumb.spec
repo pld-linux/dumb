@@ -94,7 +94,7 @@ Statyczne biblioteki DUMB dla Allegro.
 
 %prep
 %setup -q
-%patch0 -p1
+%patch -P0 -p1
 
 %build
 cat <<EOF > make/config.txt
